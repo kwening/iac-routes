@@ -1,0 +1,21 @@
+---
+
+dataFolder: './data/'
+reports:
+  - name: "all routes md"
+    fields:
+      - "src"
+      - "dest"
+      - "ports"
+      - "meta.date"
+      - "meta.ticketID"
+    format: "md"
+    sortBy: "src"
+    filter:
+      - tags: "service:repo"
+      - tags: "stage:prod"
+    groupBy: "src"
+    output: "reports/all.md"
+  - name: "plain yaml"
+    format: "yaml"
+    output: "reports/all.yaml"
