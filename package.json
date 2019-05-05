@@ -1,0 +1,22 @@
+{
+  "name": "iac-routes",
+  "version": "1.0.0",
+  "description": "manage infrastructure components and routes",
+  "main": "index.js",
+  "dependencies": {
+    "commander": "^2.20.0",
+    "deepmerge": "^3.2.0",
+    "extend": "^3.0.2",
+    "fs": "^0.0.1-security",
+    "js-yaml": "^3.13.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-strongloop": "^2.1.0"
+  },
+  "scripts": {
+    "pretest": "eslint --ignore-path .gitignore ."
+  },
+  "author": "Klaus Wening",
+  "license": "ISC"
+}
