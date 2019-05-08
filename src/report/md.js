@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const utils = require('../utils');
-const filter = require('./filter');
+const reportutils = require('./utils');
 
 module.exports = {
   write: function(data, spec) {
@@ -13,11 +13,11 @@ module.exports = {
 function toMarkdown(allRoutes, spec) {
   let content = '';
 
-  allRoutes.sort(function(a, b) {
-    return a[spec.sortBy].localeCompare(b[spec.sortBy]);
-  });
-
-  const filtered = filter.apply(allRoutes, spec.filter);
+  allRoutes = reportutils.sortBy(allRoutes, spec.sortBy);
+  const filtered = reportutils.filter(allRoutes, spec.filter);
+  const grouped = reportutils.groupBy(filtered, spec.groupBy);
+  console.log(grouped);
+  console.log(typeof grouped);
 
   filtered.forEach(route => {
     // skip if type doesn't match (filter list)

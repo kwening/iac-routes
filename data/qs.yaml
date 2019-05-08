@@ -1,0 +1,10 @@
+components:
+  - name: vxdeartfactq01
+    type: server
+    ip: 10.10.20.2
+    vlan: 1900
+
+#routes:
+#  - src: vxdeartfactq01
+#    items:
+#      - "smtp.bk.datev.de : 636"

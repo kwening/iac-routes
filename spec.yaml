@@ -11,11 +11,23 @@ reports:
       - "meta.ticketID"
     format: "md"
     sortBy: "src"
+    output: "reports/all.md"
+
+  - name: "filtered routes md"
+    fields:
+      - "src"
+      - "dest"
+      - "ports"
+      - "meta.date"
+      - "meta.ticketID"
+    format: "md"
+    sortBy: "src"
     filter:
-      - tags: "service:repo"
+      - tags: "service:web"
       - tags: "stage:prod"
     groupBy: "src"
-    output: "reports/all.md"
+    output: "reports/filtered.md"
+
   - name: "plain yaml"
     format: "yaml"
     output: "reports/all.yaml"

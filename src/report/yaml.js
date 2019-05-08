@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const yaml = require('js-yaml');
-const filter = require('./filter');
+const reportutils = require('./utils');
 
 module.exports = {
   write: function(data, spec) {
@@ -11,7 +11,7 @@ module.exports = {
 };
 
 function toYaml(allRoutes, spec) {
-  const filtered = filter.apply(allRoutes, spec.filter);
+  const filtered = reportutils.filter(allRoutes, spec.filter);
 
   console.log('Writing report to file: ' + spec.output);
   fs.writeFileSync(spec.output, yaml.safeDump(filtered, {
