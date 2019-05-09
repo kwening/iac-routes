@@ -9,8 +9,8 @@ module.exports = {
   filter: function(data, filters) {
     return filter(data, filters);
   },
-  groupBy: function(data, field) {
-    return groupBy(data, field);
+  groupBy: function(data, groupSpec) {
+    return groupBy(data, groupSpec);
   },
 };
 
@@ -44,14 +44,40 @@ function filter(data, filters) {
   });
 }
 
-function groupBy(data, field) {
-  if (field === undefined) {
-    return {all: data};
+function groupBy(data, groupSpec) {
+  if (groupSpec === undefined) {
+    return {type: 'none', groups: [{ all: {data: data}}]};
   }
 
+  let obj = {type: '', groups: []};
+
+  if (Array.isArray(groupSpec)) {
+    groupSpec.forEach(spec => {
+      obj.groups = applyGroupSpec(data, spec.field);
+      obj.type = spec.type;
+    });
+  }
+
+  return obj;
+}
+
+function applyGroupSpec(data, field) {
   return data.reduce(function(rv, x) {
-    let val = utils.resolveValue(field, x);
-    (rv[val] = rv[val] || []).push(x);
+    let groupKey = utils.resolveValue(field, x);
+
+    if (rv.size === undefined) {
+      rv = new Map();
+    }
+
+    let group = rv.get(groupKey);
+
+    if (group === undefined) {
+      group = {data: [x], header: groupKey};
+    } else {
+      group.data.push(x);
+    }
+
+    rv.set(groupKey, group);
     return rv;
-  }, {});
+  }, Map);
 }

@@ -38,7 +38,7 @@ routes:
       date: "01.01.2019"
       comment: "Wichtig"
 
-  - "servernode1 : servernode2: 22"
+  - "servernode1 : servernode2 : 22"
 
   - src: web-servers
     items:

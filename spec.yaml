@@ -2,17 +2,6 @@
 
 dataFolder: './data/'
 reports:
-  - name: "all routes md"
-    fields:
-      - "src"
-      - "dest"
-      - "ports"
-      - "meta.date"
-      - "meta.ticketID"
-    format: "md"
-    sortBy: "src"
-    output: "reports/all.md"
-
   - name: "filtered routes md"
     fields:
       - "src"
@@ -22,12 +11,14 @@ reports:
       - "meta.ticketID"
     format: "md"
     sortBy: "src"
-    filter:
-      - tags: "service:web"
-      - tags: "stage:prod"
-    groupBy: "src"
+#    filter:
+#      - tags: "service:web"
+#      - tags: "stage:prod"
+    groupBy:
+      - field: "src"
+        type: "row"
     output: "reports/filtered.md"
 
-  - name: "plain yaml"
-    format: "yaml"
-    output: "reports/all.yaml"
+#  - name: "plain yaml"
+#    format: "yaml"
+#    output: "reports/all.yaml"

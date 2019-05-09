@@ -18,6 +18,7 @@ module.exports = {
 function readYamlFiles(folder, encoding) {
   let yamlData = {};
 
+  // read all yaml files in srcFolder
   fs.readdirSync(folder).forEach(file => {
     try {
       let doc = yaml.safeLoad(fs.readFileSync(folder + file, encoding));
@@ -140,6 +141,8 @@ function resolveRoutes(yamlData) {
       route.tags = [];
     }
 
+    route.type = '';
+
     let srcComp = yamlData.components.find(obj => {
       return obj.id === route.src;
     });
@@ -148,6 +151,7 @@ function resolveRoutes(yamlData) {
       route.srcIP === undefined ? route.srcIP = srcComp.ip : '';
       route.srcHost === undefined ? route.srcHost = srcComp.name : '';
       route.tags = [...new Set([...srcComp.tags, ...route.tags])];
+      route.type = 'OUT';
     }
 
     let destComp = yamlData.components.find(obj => {
@@ -157,6 +161,8 @@ function resolveRoutes(yamlData) {
     if (destComp !== undefined) {
       route.destIP === undefined ? route.destIP = destComp.ip : '';
       route.destHost === undefined ? route.destHost = destComp.name : '';
+      route.tags = [...new Set([...destComp.tags, ...route.tags])];
+      route.type = 'IN' + route.type;
     }
   });
 }

@@ -1,0 +1,14 @@
+---
+
+dataFolder: './data/'
+reports:
+  - name: "all routes md"
+    fields:
+      - "src"
+      - "dest"
+      - "ports"
+      - "meta.date"
+      - "meta.ticketID"
+    format: "md"
+    sortBy: "src"
+    output: "reports/all.md"
