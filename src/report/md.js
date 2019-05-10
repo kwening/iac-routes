@@ -14,7 +14,7 @@ function toMarkdown(allRoutes, spec) {
   let content = '';
 
   allRoutes = reportutils.sortBy(allRoutes, spec.sortBy);
-  const filtered = reportutils.filter(allRoutes, spec.filter);
+  const filtered = reportutils.filter(allRoutes, spec.filter, spec.mode);
   const grouped = reportutils.groupBy(filtered, spec.groupBy);
 
   grouped.groups.forEach(group => {
@@ -34,12 +34,6 @@ function toMarkdown(allRoutes, spec) {
 }
 
 function getRow(route, spec) {
-  // TODO filter auslagern
-  // skip if type doesn't match (filter list)
-  if (spec.type !== undefined && route.type !== undefined && route.type !== spec.type) {
-    return;
-  }
-
   let content = '| ';
 
   spec.fields.forEach(field => {

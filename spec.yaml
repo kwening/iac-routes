@@ -17,8 +17,4 @@ reports:
     groupBy:
       - field: "src"
         type: "row"
-    output: "reports/filtered.md"
-
-#  - name: "plain yaml"
-#    format: "yaml"
-#    output: "reports/all.yaml"
+    output: "reports/filtered.md"s

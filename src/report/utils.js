@@ -6,8 +6,8 @@ module.exports = {
   sortBy: function(data, field) {
     return sortBy(data, field);
   },
-  filter: function(data, filters) {
-    return filter(data, filters);
+  filter: function(data, filters, mode) {
+    return filter(data, filters, mode);
   },
   groupBy: function(data, groupSpec) {
     return groupBy(data, groupSpec);
@@ -24,7 +24,14 @@ function sortBy(data, field) {
   });
 }
 
-function filter(data, filters) {
+function filter(data, filters, mode) {
+  if (mode !== undefined) {
+    data = data.filter(function(item) {
+      // skip if type doesn't match (filter list)
+      return (item.type !== undefined && item.type !== mode);
+    });
+  }
+
   if (filters === undefined) {
     return data;
   }
@@ -46,7 +53,7 @@ function filter(data, filters) {
 
 function groupBy(data, groupSpec) {
   if (groupSpec === undefined) {
-    return {type: 'none', groups: [{ all: {data: data}}]};
+    return {type: 'none', groups: new Map([['all', {data: data}]])};
   }
 
   let obj = {type: '', groups: []};

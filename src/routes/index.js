@@ -141,7 +141,7 @@ function resolveRoutes(yamlData) {
       route.tags = [];
     }
 
-    route.type = '';
+    route.direction = '';
 
     let srcComp = yamlData.components.find(obj => {
       return obj.id === route.src;
@@ -151,7 +151,7 @@ function resolveRoutes(yamlData) {
       route.srcIP === undefined ? route.srcIP = srcComp.ip : '';
       route.srcHost === undefined ? route.srcHost = srcComp.name : '';
       route.tags = [...new Set([...srcComp.tags, ...route.tags])];
-      route.type = 'OUT';
+      route.direction = 'OUT';
     }
 
     let destComp = yamlData.components.find(obj => {
@@ -162,7 +162,7 @@ function resolveRoutes(yamlData) {
       route.destIP === undefined ? route.destIP = destComp.ip : '';
       route.destHost === undefined ? route.destHost = destComp.name : '';
       route.tags = [...new Set([...destComp.tags, ...route.tags])];
-      route.type = 'IN' + route.type;
+      route.direction = 'IN' + route.type;
     }
   });
 }
