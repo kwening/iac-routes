@@ -48,11 +48,7 @@ function resolveComponents(yamlData) {
           return;
         }
 
-        if (item.groups === undefined) {
-          item.groups = [comp.id];
-        } else {
-          item.groups.push(comp.id);
-        }
+        (item.groups = item.groups || []).push(comp.id);
       });
 
     }
@@ -70,11 +66,7 @@ function resolveComponents(yamlData) {
       });
 
       if (group.tags !== undefined) {
-        if (comp.tags === undefined) {
-          comp.tags = group.tags;
-        } else {
-          comp.tags = [...new Set([...comp.tags, ...group.tags])];
-        }
+        comp.tags = merge(comp.tags, group.tags);
       }
     });
   });
@@ -87,51 +79,10 @@ function resolveRoutes(yamlData) {
   yamlData.routes.forEach(route => {
     if (route.items !== undefined) {
       route.items.forEach(r => {
-        yamlData.allRoutes.push(getRouteObject(r, route.src, route.dest));
+        expandGroups(yamlData, getRouteObject(r, route.src, route.dest), yamlData.components);
       });
     } else {
-      yamlData.allRoutes.push(getRouteObject(route, undefined, undefined));
-    }
-  });
-
-  // expand groups
-  yamlData.allRoutes.forEach(route => {
-    let srcComp = yamlData.components.find(obj => {
-      return obj.id === route.src;
-    });
-
-    if (srcComp !== undefined && srcComp.items !== undefined) {
-      route.type = 'grouped';
-      srcComp.items.forEach(c => {
-        let srcComp2 = yamlData.components.find(obj => {
-          return obj.id === c;
-        });
-
-        let newRoute = {...route};
-        newRoute.src = srcComp2.id;
-        newRoute.srcGroup = srcComp.id;
-        newRoute.type = 'expanded';
-        yamlData.allRoutes.push(newRoute);
-      });
-    }
-
-    let destComp = yamlData.components.find(obj => {
-      return obj.id === route.dest;
-    });
-
-    if (destComp !== undefined && destComp.items !== undefined) {
-      route.type = 'grouped';
-      destComp.items.forEach(c => {
-        let destComp2 = yamlData.components.find(obj => {
-          return obj.id === c;
-        });
-
-        let newRoute = {...route};
-        newRoute.dest = destComp2.id;
-        newRoute.destGroup = destComp.id;
-        newRoute.type = 'expanded';
-        yamlData.allRoutes.push(newRoute);
-      });
+      expandGroups(yamlData, getRouteObject(route, undefined, undefined), yamlData.components);
     }
   });
 
@@ -150,7 +101,7 @@ function resolveRoutes(yamlData) {
     if (srcComp !== undefined) {
       route.srcIP === undefined ? route.srcIP = srcComp.ip : '';
       route.srcHost === undefined ? route.srcHost = srcComp.name : '';
-      route.tags = [...new Set([...srcComp.tags, ...route.tags])];
+      route.tags = merge(route.tags, srcComp.tags);
       route.direction = 'OUT';
     }
 
@@ -161,8 +112,8 @@ function resolveRoutes(yamlData) {
     if (destComp !== undefined) {
       route.destIP === undefined ? route.destIP = destComp.ip : '';
       route.destHost === undefined ? route.destHost = destComp.name : '';
-      route.tags = [...new Set([...destComp.tags, ...route.tags])];
-      route.direction = 'IN' + route.type;
+      route.tags = merge(route.tags, destComp.tags);
+      route.direction = 'IN' + route.direction;
     }
   });
 }
@@ -197,4 +148,48 @@ function getRouteObject(route, src, dest) {
   }
 
   return newRoute;
+}
+
+function expandGroups(yamlData, route) {
+  let srcRoutes = [];
+
+  let srcComp = yamlData.components.find(obj => {
+    return obj.id === route.src;
+  });
+
+  let destComp = yamlData.components.find(obj => {
+    return obj.id === route.dest;
+  });
+
+  if (srcComp !== undefined && srcComp.items !== undefined) {
+    srcComp.items.forEach(c => {
+      let srcComp2 = yamlData.components.find(obj => {
+        return obj.id === c;
+      });
+
+      let newRoute = {...route};
+      newRoute.src = srcComp2.id;
+      newRoute.srcGroup = srcComp.id;
+      srcRoutes.push(newRoute);
+    });
+  } else {
+    srcRoutes.push(route);
+  }
+
+  srcRoutes.forEach(srcRoute => {
+    if (destComp !== undefined && destComp.items !== undefined) {
+      destComp.items.forEach(c => {
+        let destComp2 = yamlData.components.find(obj => {
+          return obj.id === c;
+        });
+
+        let newRoute = {...srcRoute};
+        newRoute.dest = destComp2.id;
+        newRoute.destGroup = destComp.id;
+        yamlData.allRoutes.push(newRoute);
+      });
+    } else {
+      yamlData.allRoutes.push(srcRoute);
+    }
+  });
 }

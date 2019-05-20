@@ -15,6 +15,8 @@ reports:
 #      - tags: "service:web"
 #      - tags: "stage:prod"
     groupBy:
+      - field: "tags.service"
+        type: "file"
       - field: "src"
         type: "row"
-    output: "reports/filtered.md"s
+    output: "reports/filtered-{header}.md"

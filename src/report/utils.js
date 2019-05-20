@@ -25,12 +25,12 @@ function sortBy(data, field) {
 }
 
 function filter(data, filters, mode) {
-  if (mode !== undefined) {
+  /* if (mode !== undefined) {
     data = data.filter(function(item) {
       // skip if type doesn't match (filter list)
       return (item.type !== undefined && item.type !== mode);
     });
-  }
+  }*/
 
   if (filters === undefined) {
     return data;
@@ -52,31 +52,45 @@ function filter(data, filters, mode) {
 }
 
 function groupBy(data, groupSpec) {
+  // Default groupSpec
   if (groupSpec === undefined) {
-    return {type: 'none', groups: new Map([['all', {data: data}]])};
+    // return {type: 'none', groups: new Map([['all', {data: data}]])};
+    groupSpec = [{ type: 'file'}];
   }
 
-  let obj = {type: '', groups: []};
+  let result = new Map([['start', {data: data}]]);
+  let grouped = new Map();
 
-  if (Array.isArray(groupSpec)) {
-    groupSpec.forEach(spec => {
-      obj.groups = applyGroupSpec(data, spec.field);
-      obj.type = spec.type;
+  groupSpec.forEach(spec => {
+    console.log('Grouping by ' + spec.field);
+
+    result.forEach((value, key, map) => {
+      result = applyGroupSpec(value.data, spec, key);
+      value.content = [ ...result.keys()];
+      delete value.data;
+      grouped.set(key, value);
+
+      grouped = new Map([...grouped, ...result]);
     });
-  }
+  });
 
-  return obj;
+  return grouped;
 }
 
-function applyGroupSpec(data, field) {
+function applyGroupSpec(data, spec, prefix) {
+  if (spec.field === undefined) {
+    return new Map([['all', {data: data}]]);
+  }
+
   return data.reduce(function(rv, x) {
-    let groupKey = utils.resolveValue(field, x);
+    let groupKey = utils.resolveValue(spec.field, x);
+    let prefixedKey = prefix + '.' + groupKey;
 
     if (rv.size === undefined) {
       rv = new Map();
     }
 
-    let group = rv.get(groupKey);
+    let group = rv.get(prefixedKey);
 
     if (group === undefined) {
       group = {data: [x], header: groupKey};
@@ -84,7 +98,9 @@ function applyGroupSpec(data, field) {
       group.data.push(x);
     }
 
-    rv.set(groupKey, group);
+    group.spec = spec;
+
+    rv.set(prefixedKey, group);
     return rv;
   }, Map);
 }

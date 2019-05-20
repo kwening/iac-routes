@@ -10,7 +10,6 @@ reports:
       - "meta.date"
       - "meta.ticketID"
     format: "md"
-    mode: "grouped"
     sortBy: "src"
     output: "reports/all.md"
   - name: "plain yaml"

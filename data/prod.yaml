@@ -12,22 +12,24 @@ components:
     vlan: 1800
     comment: first node
     tags:
-      - ha:node1
-      - service:app
+      ha: node1
+      service: app
   - id: servernode2
     name: servernode2.host.de
     type: server
     ip: 10.10.10.3
     vlan: 1800
     comment: second node
+    tags:
+      service: web
   - name: web-servers
     type: group
     items:
       - servernode1
       - servernode2
     tags:
-      - stage:prod
-      - service:web
+      stage: prod
+
 
 routes:
   - src: servernode1

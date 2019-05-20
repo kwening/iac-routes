@@ -4,36 +4,59 @@ const fs = require('fs');
 const utils = require('../utils');
 const reportutils = require('./utils');
 
+var spec;
+
 module.exports = {
-  write: function(data, spec) {
-    toMarkdown(data, spec);
+  write: function(data, s) {
+    spec = s;
+    toMarkdown(data);
   },
 };
 
-function toMarkdown(allRoutes, spec) {
+function toMarkdown(allRoutes) {
+  allRoutes = reportutils.filter(allRoutes, spec.filter, spec.mode);
+  allRoutes = reportutils.sortBy(allRoutes, spec.sortBy);
+  allRoutes = reportutils.groupBy(allRoutes, spec.groupBy);
+
+  resolveContent(allRoutes, allRoutes.get('start').content);
+}
+
+function resolveContent(allData, keys) {
   let content = '';
 
-  allRoutes = reportutils.sortBy(allRoutes, spec.sortBy);
-  const filtered = reportutils.filter(allRoutes, spec.filter, spec.mode);
-  const grouped = reportutils.groupBy(filtered, spec.groupBy);
+  keys.forEach(itemKey => {
+    let item = allData.get(itemKey);
 
-  grouped.groups.forEach(group => {
-    if (grouped.type === 'row') {
-      content += '| ' + group.header + '|\n';
-    }
-
-    if (group.data !== undefined) {
-      group.data.forEach((route) => {
-        content += getRow(route, spec);
-      });
+    if (item.spec.type === 'file') {
+      content = '';
+      writeFile(allData, item);
+    } else if (item.content !== undefined) {
+      content += resolveContent(allData, item.content);
+    } else {
+      content += printData(item);
     }
   });
 
-  console.log('Writing report to file: ' + spec.output);
-  fs.writeFileSync(spec.output, content);
+  return content;
 }
 
-function getRow(route, spec) {
+function printData(item) {
+  let content = '';
+
+  if (item.header !== 'undefined') {
+    content += '## ' + item.header + '\n\n';
+  }
+
+  item.data.forEach((route) => {
+    content += getRow(route);
+  });
+
+  content += '\n';
+
+  return content;
+}
+
+function getRow(route) {
   let content = '| ';
 
   spec.fields.forEach(field => {
@@ -53,4 +76,14 @@ function getRow(route, spec) {
   content += '\n';
 
   return content;
+}
+
+function writeFile(allData, item) {
+  let content = '';
+  content += resolveContent(allData, item.content);
+
+  let filename = utils.replaceVars(spec.output, item);
+
+  console.log('Writing report to file: ' + filename);
+  fs.writeFileSync(filename, content);
 }
