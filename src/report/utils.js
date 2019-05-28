@@ -74,12 +74,14 @@ function groupBy(data, groupSpec) {
     });
   });
 
+  console.log(grouped);
+
   return grouped;
 }
 
 function applyGroupSpec(data, spec, prefix) {
   if (spec.field === undefined) {
-    return new Map([['all', {data: data}]]);
+    return new Map([['all', {data: data, spec: spec, header: ''}]]);
   }
 
   return data.reduce(function(rv, x) {

@@ -6,6 +6,7 @@
   "dependencies": {
     "commander": "^2.20.0",
     "deepmerge": "^3.2.0",
+    "exceljs": "^1.11.0",
     "extend": "^3.0.2",
     "fs": "^0.0.1-security",
     "js-yaml": "^3.13.1"
@@ -15,7 +16,7 @@
     "eslint-config-strongloop": "^2.1.0"
   },
   "scripts": {
-    "pretest": "eslint --ignore-path .gitignore ."
+    "pretest": "eslint --ignore-path .gitignore --fix ."
   },
   "author": "Klaus Wening",
   "license": "ISC"

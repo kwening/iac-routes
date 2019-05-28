@@ -1,5 +1,4 @@
 ---
-
 dataFolder: './data/'
 reports:
   - name: "all routes md"
@@ -15,3 +14,12 @@ reports:
   - name: "plain yaml"
     format: "yaml"
     output: "reports/all.yaml"
+  - name: "xlsx all"
+    fields:
+      - "src"
+      - "dest"
+      - "ports"
+      - "meta.date"
+      - "meta.ticketID"
+    format: "xlsx"
+    output: "reports/all.xlsx"

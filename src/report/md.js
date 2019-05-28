@@ -18,26 +18,25 @@ function toMarkdown(allRoutes) {
   allRoutes = reportutils.sortBy(allRoutes, spec.sortBy);
   allRoutes = reportutils.groupBy(allRoutes, spec.groupBy);
 
-  resolveContent(allRoutes, allRoutes.get('start').content);
+  resolveContent(allRoutes, allRoutes.get('start'));
 }
 
-function resolveContent(allData, keys) {
-  let content = '';
+function resolveContent(allData, item) {
+  if (item.data !== undefined) {
+    return printData(item);
+  }
 
-  keys.forEach(itemKey => {
-    let item = allData.get(itemKey);
+  item.content.forEach(itemKey => {
+    let subItem = allData.get(itemKey);
 
-    if (item.spec.type === 'file') {
-      content = '';
-      writeFile(allData, item);
+    if (subItem.spec.type === 'file') {
+      writeFile(allData, subItem);
     } else if (item.content !== undefined) {
-      content += resolveContent(allData, item.content);
+      return resolveContent(allData, subItem);
     } else {
-      content += printData(item);
+      return printData(subItem);
     }
   });
-
-  return content;
 }
 
 function printData(item) {
@@ -80,7 +79,7 @@ function getRow(route) {
 
 function writeFile(allData, item) {
   let content = '';
-  content += resolveContent(allData, item.content);
+  content += resolveContent(allData, item);
 
   let filename = utils.replaceVars(spec.output, item);
 

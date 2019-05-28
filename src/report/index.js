@@ -9,6 +9,8 @@ module.exports = {
       report = require('./md');
     } else if (spec.format === 'yaml') {
       report = require('./yaml');
+    } else if (spec.format === 'xlsx') {
+      report = require('./xlsx');
     }
 
     report.write(data, spec);
