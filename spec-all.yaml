@@ -21,5 +21,10 @@ reports:
       - "ports"
       - "meta.date"
       - "meta.ticketID"
+    groupBy:
+      - field: "tags.service"
+        type: "file"
+      - field: "src"
+        type: "tab"
     format: "xlsx"
     output: "reports/all.xlsx"

@@ -25,7 +25,7 @@ function toXlsx(allRoutes, spec) {
 
 function resolveContent(allData, item) {
   if (item.data !== undefined) {
-    return printData(item);
+    return printData(allData, item);
   }
 
   item.content.forEach(itemKey => {
@@ -33,26 +33,35 @@ function resolveContent(allData, item) {
 
     if (subItem.spec.type === 'file') {
       writeFile(allData, subItem);
+    } else if (subItem.spec.type === 'tab') {
+      writeSheet(allData, subItem);
     } else if (item.content !== undefined) {
       return resolveContent(allData, subItem);
     } else {
-      return printData(subItem);
+      return printData(allData, subItem);
     }
   });
 }
 
-function printData(item) {
-  let rows = [];
+function printData(allData, item) {
+  let ws = getCurrentWorksheet()
 
-  if (item.header !== 'undefined') {
-    rows.push([item.header]);
-  }
+  let row = ws.addRow(spec.fields);
+
+  row.fill = {
+    type: 'pattern',
+    pattern:'darkVertical',
+    fgColor:{argb:'FF666666'}
+  };
+  row.font = { name: 'Comic Sans MS', family: 4, size: 12, bold: true };
+  row.commit();
 
   item.data.forEach((route) => {
-    rows.push(getRow(route));
+    row = ws.addRow(getRow(route));
+    row.commit();
   });
 
-  currentWorksheet.addRows(rows);
+  //ws.addRows(rows);
 }
 
 function getRow(route) {
@@ -75,9 +84,16 @@ function getRow(route) {
   return row;
 }
 
+function writeSheet(allData, item) {
+  console.log(item)
+  currentWorksheet = currentWorkbook.addWorksheet(item.header);
+
+  resolveContent(allData, item);
+}
+
 function writeFile(allData, item) {
   currentWorkbook = new Excel.Workbook();
-  currentWorksheet = currentWorkbook.addWorksheet('Routes');
+  currentWorkbook .properties.outlineLevelCol = 1;
 
   resolveContent(allData, item);
 
@@ -89,4 +105,12 @@ function writeFile(allData, item) {
     .then(function() {
       // done
     });
+}
+
+function getCurrentWorksheet() {
+  if(currentWorksheet === undefined) {
+    currentWorksheet = currentWorkbook.addWorksheet('Routes');
+  }
+
+  return currentWorksheet;
 }

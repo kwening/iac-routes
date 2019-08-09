@@ -54,7 +54,6 @@ function filter(data, filters, mode) {
 function groupBy(data, groupSpec) {
   // Default groupSpec
   if (groupSpec === undefined) {
-    // return {type: 'none', groups: new Map([['all', {data: data}]])};
     groupSpec = [{ type: 'file'}];
   }
 
@@ -73,8 +72,6 @@ function groupBy(data, groupSpec) {
       grouped = new Map([...grouped, ...result]);
     });
   });
-
-  console.log(grouped);
 
   return grouped;
 }
