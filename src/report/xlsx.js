@@ -44,14 +44,14 @@ function resolveContent(allData, item) {
 }
 
 function printData(allData, item) {
-  let ws = getCurrentWorksheet()
+  let ws = getCurrentWorksheet();
 
   let row = ws.addRow(spec.fields);
 
   row.fill = {
     type: 'pattern',
-    pattern:'darkVertical',
-    fgColor:{argb:'FF666666'}
+    pattern: 'darkVertical',
+    fgColor: {argb: 'FF666666'},
   };
   row.font = { name: 'Comic Sans MS', family: 4, size: 12, bold: true };
   row.commit();
@@ -61,7 +61,7 @@ function printData(allData, item) {
     row.commit();
   });
 
-  //ws.addRows(rows);
+  // ws.addRows(rows);
 }
 
 function getRow(route) {
@@ -85,7 +85,7 @@ function getRow(route) {
 }
 
 function writeSheet(allData, item) {
-  console.log(item)
+  console.log(item);
   currentWorksheet = currentWorkbook.addWorksheet(item.header);
 
   resolveContent(allData, item);
@@ -108,7 +108,7 @@ function writeFile(allData, item) {
 }
 
 function getCurrentWorksheet() {
-  if(currentWorksheet === undefined) {
+  if (currentWorksheet === undefined) {
     currentWorksheet = currentWorkbook.addWorksheet('Routes');
   }
 
